@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Coding Test | Timer + Submit</title>
+  <title>Coding Test | Redirecting to Django Version</title>
+  <meta http-equiv="refresh" content="3;url=http://localhost:8000/" />
 
   <style>
     :root {
@@ -136,138 +137,52 @@
 <body>
   <header>
     <div class="brand">Code<span>Test</span> Demo</div>
-    <div id="timer" class="badge amber">05:00</div>
-    <div id="global-pass" class="badge amber">0/0 passed</div>
+    <div class="badge amber">Redirecting...</div>
+    <div class="badge amber">Django Backend</div>
   </header>
 
   <main>
     <section class="problem">
-      <h1>Problem: Sum of two numbers</h1>
-      <p>Implement a function <code>solve(a, b)</code> that returns the sum of its two numeric arguments.</p>
-      <p class="note">Use "Run" to check your code locally. Your code will be tested against hidden cases.</p>
+      <h1>Redirecting to Django Backend</h1>
+      <p>This application has been upgraded to use Django framework with a full backend system.</p>
+      <p class="note">You will be redirected to the new Django version in a few seconds. If not, <a href="http://localhost:8000/" style="color: var(--primary);">click here</a>.</p>
     </section>
 
     <section class="workspace">
-      <div class="panel editor-pane">
-        <div class="toolbar">
-          <button id="run-btn" class="btn primary">Run</button>
-          <button id="reset-btn" class="btn">Reset</button>
-          <button id="submit-btn" class="btn primary">Submit</button>
-          <div class="spacer"></div>
-          <div id="pass-counter" class="badge amber">0/0 passed</div>
-        </div>
-        <textarea id="editor" class="editor" spellcheck="false"></textarea>
-      </div>
-
-      <div class="panel result-pane">
-        <header><strong>Results</strong></header>
-        <div id="results" class="results"></div>
-        <div class="console">
-          <div class="title">Console</div>
-          <pre id="console-output"></pre>
+      <div class="panel">
+        <div style="padding: 40px; text-align: center;">
+          <h2 style="color: var(--primary); margin-bottom: 20px;">🚀 New Features Available</h2>
+          <ul style="text-align: left; max-width: 500px; margin: 0 auto;">
+            <li>✅ Full Django backend with database</li>
+            <li>✅ RESTful API endpoints</li>
+            <li>✅ Admin interface for management</li>
+            <li>✅ Multi-language support (JavaScript & Python)</li>
+            <li>✅ Secure code execution</li>
+            <li>✅ Exam session tracking</li>
+            <li>✅ Comprehensive test case system</li>
+          </ul>
         </div>
       </div>
     </section>
   </main>
 
 <script>
-  // ---------- Coding workspace ----------
-  const editor = document.getElementById('editor');
-  const runBtn = document.getElementById('run-btn');
-  const resetBtn = document.getElementById('reset-btn');
-  const resultsEl = document.getElementById('results');
-  const consoleEl = document.getElementById('console-output');
-  const passCounter = document.getElementById('pass-counter');
-  const globalPass = document.getElementById('global-pass');
-  const submitBtn = document.getElementById('submit-btn');
-  const timerEl = document.getElementById('timer');
-
-  const initialCode = `function solve(a, b) {
-  // Return the sum of two numbers
-  return a + b;
-}`;
-  editor.value = initialCode;
-
-  const tests = [
-    { name: 'Small positive numbers', input: [1, 2], expected: 3 },
-    { name: 'Zero values', input: [0, 0], expected: 0 },
-    { name: 'With a negative', input: [-5, 3], expected: -2 },
-    { name: 'Large integers', input: [1000000, 2345678], expected: 3345678 },
-    { name: 'Floating point', input: [1.5, 2.25], expected: 3.75 }
-  ];
-
-  runBtn.addEventListener('click', () => {
-    resultsEl.innerHTML = '';
-    consoleEl.textContent = '';
-    let code = editor.value;
-    try {
-      eval(code);
-    } catch (err) {
-      consoleEl.textContent = 'Error: ' + err.message;
-      return;
+  // Redirect to Django backend
+  console.log('Redirecting to Django backend...');
+  
+  // Show countdown
+  let countdown = 3;
+  const countdownElement = document.querySelector('.badge.amber');
+  
+  const countdownInterval = setInterval(() => {
+    countdown--;
+    countdownElement.textContent = `Redirecting in ${countdown}s...`;
+    
+    if (countdown <= 0) {
+      clearInterval(countdownInterval);
+      window.location.href = 'http://localhost:8000/';
     }
-
-    let passed = 0;
-    tests.forEach((t) => {
-      let row = document.createElement('div');
-      row.className = 'test-row';
-      let name = document.createElement('div');
-      name.textContent = t.name;
-      let detail = document.createElement('div');
-      try {
-        let result = solve(...t.input);
-        if (result === t.expected) {
-          row.classList.add('pass');
-          detail.textContent = `Passed (Got ${result})`;
-          passed++;
-        } else {
-          row.classList.add('fail');
-          detail.textContent = `Failed (Got ${result}, Expected ${t.expected})`;
-        }
-      } catch (err) {
-        row.classList.add('fail');
-        detail.textContent = 'Error: ' + err.message;
-      }
-      row.appendChild(name);
-      row.appendChild(detail);
-      resultsEl.appendChild(row);
-    });
-    passCounter.textContent = `${passed}/${tests.length} passed`;
-    globalPass.textContent = `${passed}/${tests.length} passed`;
-  });
-
-  resetBtn.addEventListener('click', () => { editor.value = initialCode; });
-
-  // ---------- Timer + Submit ----------
-  let timeLeft = 5 * 60; // 5 minutes
-  let timerInterval = setInterval(updateTimer, 1000);
-
-  function updateTimer() {
-    let minutes = Math.floor(timeLeft / 60);
-    let seconds = timeLeft % 60;
-    timerEl.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      finishTest(true);
-    }
-    timeLeft--;
-  }
-
-  submitBtn.addEventListener('click', () => finishTest(false));
-
-  function finishTest(auto) {
-    runBtn.disabled = true;
-    resetBtn.disabled = true;
-    submitBtn.disabled = true;
-    editor.readOnly = true;
-    timerEl.classList.remove('amber');
-    timerEl.classList.add('red');
-    if (auto) {
-      alert("⏰ Time is up! Your test has been auto-submitted.");
-    } else {
-      alert("✅ You have submitted your test.");
-    }
-  }
+  }, 1000);
 </script>
 </body>
 </html>

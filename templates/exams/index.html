@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coding Test | Django Backend</title>
+
+  <style>
+    :root {
+      --bg: #0f1221;
+      --panel: #161a2e;
+      --panel-2: #1d2240;
+      --text: #e9ecf1;
+      --muted: #aeb4c2;
+      --primary: #6ea8fe;
+      --primary-2: #3f7bfd;
+      --red: #ff5d5d;
+      --amber: #f1c40f;
+      --border: #2a3054;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --code-bg: #0b0e1a;
+      --badge: #232a52;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 800px at 10% 0%, #151a33, #0c1024 60%, #070a18 100%);
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+      line-height: 1.45;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header .brand { font-weight: 700; letter-spacing: .3px; }
+    header .brand span { color: var(--primary); }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .badge.amber { background: rgba(241,196,15,.12); border: 1px solid rgba(241,196,15,.4); color: #ffe07a; }
+    .badge.red { background: rgba(255,93,93,.12); border: 1px solid rgba(255,93,93,.4); color: #ffb3b3; }
+    main { padding: 20px; max-width: 1200px; margin: 0 auto; }
+    .problem {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: 0 10px 30px var(--shadow);
+      margin-bottom: 16px;
+    }
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 1000px) { .workspace { grid-template-columns: 1fr; } }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px var(--shadow);
+    }
+    .editor-pane .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: var(--panel-2);
+      border-bottom: 1px solid var(--border);
+    }
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--badge);
+      color: var(--text);
+      padding: 8px 12px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .btn.primary { background: linear-gradient(180deg, var(--primary), var(--primary-2)); border: 1px solid #2753e6; }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
+    .editor {
+      width: 100%;
+      min-height: 420px;
+      background: var(--code-bg);
+      color: #d1e3ff;
+      border: 0;
+      padding: 14px;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      outline: none;
+      resize: vertical;
+    }
+    .results { padding: 10px; max-height: 520px; overflow: auto; }
+    .test-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px 12px;
+      background: #11152b;
+      border: 1px solid #222a55;
+      padding: 10px;
+      border-radius: 10px;
+      margin: 8px 0;
+    }
+    .test-row.pass { border-color: rgba(46,204,113,.35); }
+    .test-row.fail { border-color: rgba(255,93,93,.35); }
+    .console {
+      background: #0a0e21;
+      border-top: 1px dashed var(--border);
+      padding: 10px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #9ad0ff;
+      max-height: 160px;
+      overflow: auto;
+    }
+    .console .title { color: var(--muted); font-weight: 700; margin-bottom: 6px; }
+    .language-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .language-selector select {
+      background: var(--badge);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Code<span>Test</span> Django</div>
+    <div id="timer" class="badge amber">05:00</div>
+    <div id="global-pass" class="badge amber">0/0 passed</div>
+  </header>
+
+  <main>
+    <section class="problem">
+      <h1 id="problem-title">Loading problem...</h1>
+      <p id="problem-description">Please wait while we load the problem.</p>
+      <p class="note">Use "Run" to check your code locally. Your code will be tested against hidden cases.</p>
+    </section>
+
+    <section class="workspace">
+      <div class="panel editor-pane">
+        <div class="toolbar">
+          <button id="run-btn" class="btn primary">Run</button>
+          <button id="reset-btn" class="btn">Reset</button>
+          <button id="submit-btn" class="btn primary">Submit</button>
+          <div class="spacer"></div>
+          <div class="language-selector">
+            <label for="language-select">Language:</label>
+            <select id="language-select">
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+            </select>
+          </div>
+          <div id="pass-counter" class="badge amber">0/0 passed</div>
+        </div>
+        <textarea id="editor" class="editor" spellcheck="false"></textarea>
+      </div>
+
+      <div class="panel result-pane">
+        <header><strong>Results</strong></header>
+        <div id="results" class="results"></div>
+        <div class="console">
+          <div class="title">Console</div>
+          <pre id="console-output"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+  // ---------- Global Variables ----------
+  let currentProblem = null;
+  let currentSession = null;
+  let timeLeft = 300; // 5 minutes
+  let timerInterval = null;
+  let problems = [];
+
+  // ---------- DOM Elements ----------
+  const editor = document.getElementById('editor');
+  const runBtn = document.getElementById('run-btn');
+  const resetBtn = document.getElementById('reset-btn');
+  const resultsEl = document.getElementById('results');
+  const consoleEl = document.getElementById('console-output');
+  const passCounter = document.getElementById('pass-counter');
+  const globalPass = document.getElementById('global-pass');
+  const submitBtn = document.getElementById('submit-btn');
+  const timerEl = document.getElementById('timer');
+  const problemTitle = document.getElementById('problem-title');
+  const problemDescription = document.getElementById('problem-description');
+  const languageSelect = document.getElementById('language-select');
+
+  // ---------- API Functions ----------
+  async function fetchProblems() {
+    try {
+      const response = await fetch('/api/problems/');
+      if (response.ok) {
+        problems = await response.json();
+        if (problems.length > 0) {
+          loadProblem(0);
+        } else {
+          console.error('No problems available');
+        }
+      } else {
+        console.error('Failed to fetch problems');
+      }
+    } catch (error) {
+      console.error('Error fetching problems:', error);
+    }
+  }
+
+  async function startExamSession(problemId) {
+    try {
+      const response = await fetch(`/api/problems/${problemId}/start_exam/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (response.ok) {
+        const sessionData = await response.json();
+        console.log('Session data received:', sessionData);
+        currentSession = sessionData;
+        timeLeft = sessionData.time_remaining;
+        startTimer();
+        return sessionData;
+      } else {
+        console.error('Failed to start exam session');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error starting exam session:', error);
+      return null;
+    }
+  }
+
+  async function executeCode(code, language, testCases) {
+    try {
+      const response = await fetch('/api/execute/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: code,
+          language: language,
+          test_cases: testCases
+        })
+      });
+      
+      if (response.ok) {
+        return await response.json();
+      } else {
+        console.error('Failed to execute code');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error executing code:', error);
+      return null;
+    }
+  }
+
+  async function submitCode(code, language) {
+    if (!currentSession) {
+      console.error('No active session');
+      return null;
+    }
+
+    // Debug logging
+    console.log('Current session:', currentSession);
+    console.log('Session ID:', currentSession.id);
+    console.log('Session structure:', JSON.stringify(currentSession, null, 2));
+
+    try {
+      // Get the correct session ID - it might be nested
+      const sessionId = currentSession.id || currentSession.session_id || currentSession.sessionId;
+      console.log('Using session ID:', sessionId);
+      
+      if (!sessionId) {
+        console.error('No valid session ID found');
+        return null;
+      }
+      
+      const response = await fetch(`/api/sessions/${sessionId}/submit/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: code,
+          language: language
+        })
+      });
+      
+      if (response.ok) {
+        return await response.json();
+      } else {
+        const errorText = await response.text();
+        console.error('Failed to submit code. Status:', response.status);
+        console.error('Error response:', errorText);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error submitting code:', error);
+      return null;
+    }
+  }
+
+  // ---------- Timer Functions ----------
+  function startTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+    }
+    
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  function updateTimer() {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    timerEl.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+    
+    if (timeLeft <= 60) {
+      timerEl.classList.remove('amber');
+      timerEl.classList.add('red');
+    }
+    
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      finishTest(true);
+    }
+    timeLeft--;
+  }
+
+  // ---------- Problem Loading ----------
+  async function loadProblem(idx) {
+    if (idx >= problems.length) {
+      showTestCompleted();
+      return;
+    }
+
+    currentProblem = problems[idx];
+    
+    // Update UI
+    problemTitle.textContent = `Problem: ${currentProblem.title}`;
+    problemDescription.innerHTML = currentProblem.description;
+    editor.value = currentProblem.initial_code;
+    
+    // Reset results
+    resultsEl.innerHTML = '';
+    consoleEl.textContent = '';
+    passCounter.textContent = `0/${currentProblem.test_cases.length} passed`;
+    globalPass.textContent = `0/${currentProblem.test_cases.length} passed`;
+    
+    // Enable buttons
+    runBtn.disabled = false;
+    resetBtn.disabled = false;
+    submitBtn.disabled = false;
+    editor.readOnly = false;
+    
+    // Start exam session
+    const session = await startExamSession(currentProblem.id);
+    if (!session) {
+      console.error('Failed to start exam session');
+    }
+  }
+
+  // ---------- Run Button ----------
+  runBtn.addEventListener('click', async () => {
+    if (!currentProblem) return;
+    
+    resultsEl.innerHTML = '';
+    consoleEl.textContent = '';
+    
+    const code = editor.value;
+    const language = languageSelect.value;
+    
+    if (!code.trim()) {
+      consoleEl.textContent = 'Error: Please enter some code';
+      return;
+    }
+
+    // Prepare test cases for execution
+    const testCases = currentProblem.test_cases.map(tc => ({
+      name: tc.name,
+      input: tc.input_data,
+      expected: tc.expected_output
+    }));
+
+    // Execute code
+    const result = await executeCode(code, language, testCases);
+    
+    if (result && result.success) {
+      displayTestResults(result.results);
+    } else {
+      consoleEl.textContent = 'Error: Failed to execute code';
+    }
+  });
+
+  // ---------- Display Results ----------
+  function displayTestResults(results) {
+    let passed = 0;
+    
+    results.forEach(result => {
+      const row = document.createElement('div');
+      row.className = 'test-row';
+      
+      const name = document.createElement('div');
+      name.textContent = result.name;
+      
+      const detail = document.createElement('div');
+      
+      if (result.error) {
+        row.classList.add('fail');
+        detail.textContent = `Error: ${result.error}`;
+      } else if (result.passed) {
+        row.classList.add('pass');
+        detail.textContent = `Passed (Got ${result.actual})`;
+        passed++;
+      } else {
+        row.classList.add('fail');
+        detail.textContent = `Failed (Got ${result.actual}, Expected ${result.expected})`;
+      }
+      
+      row.appendChild(name);
+      row.appendChild(detail);
+      resultsEl.appendChild(row);
+    });
+    
+    passCounter.textContent = `${passed}/${results.length} passed`;
+    globalPass.textContent = `${passed}/${results.length} passed`;
+  }
+
+  // ---------- Reset Button ----------
+  resetBtn.addEventListener('click', () => {
+    if (currentProblem) {
+      editor.value = currentProblem.initial_code;
+    }
+  });
+
+  // ---------- Submit Button ----------
+  submitBtn.addEventListener('click', async () => {
+    if (!currentProblem || !currentSession) return;
+    
+    const code = editor.value;
+    const language = languageSelect.value;
+    
+    if (!code.trim()) {
+      alert('Please enter some code before submitting');
+      return;
+    }
+    
+    // Submit code
+    const submission = await submitCode(code, language);
+    
+    if (submission) {
+      finishTest(false);
+    } else {
+      alert('Failed to submit code. Please try again.');
+    }
+  });
+
+  // ---------- Test Completion ----------
+  function finishTest(auto) {
+    runBtn.disabled = true;
+    resetBtn.disabled = true;
+    submitBtn.disabled = true;
+    editor.readOnly = true;
+    timerEl.classList.remove('amber');
+    timerEl.classList.add('red');
+    clearInterval(timerInterval);
+
+    if (auto) {
+      alert("⏰ Time is up! Moving to next problem.");
+    } else {
+      alert("✅ Submitted! Moving to next problem.");
+    }
+
+    // Find current problem index and move to next
+    const currentIndex = problems.findIndex(p => p.id === currentProblem.id);
+    setTimeout(() => {
+      loadProblem(currentIndex + 1);
+    }, 500);
+  }
+
+  function showTestCompleted() {
+    problemTitle.textContent = 'Test Completed';
+    problemDescription.textContent = 'Thank you for participating.';
+    document.querySelector('.workspace').style.display = 'none';
+  }
+
+  // ---------- Language Change ----------
+  languageSelect.addEventListener('change', () => {
+    if (currentProblem) {
+      // Update initial code based on language
+      const language = languageSelect.value;
+      if (language === 'python') {
+        editor.value = currentProblem.initial_code.replace('function solve', 'def solve');
+      } else {
+        editor.value = currentProblem.initial_code.replace('def solve', 'function solve');
+      }
+    }
+  });
+
+  // ---------- Initial Load ----------
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchProblems();
+  });
+</script>
+</body>
+</html> 

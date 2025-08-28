@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coding Test</title>
+
+  <style>
+    /* same styles you had, but removed camera-related ones */
+    :root {
+      --bg: #0f1221;
+      --panel: #161a2e;
+      --panel-2: #1d2240;
+      --text: #e9ecf1;
+      --muted: #aeb4c2;
+      --primary: #6ea8fe;
+      --primary-2: #3f7bfd;
+      --green: #2ecc71;
+      --red: #ff5d5d;
+      --amber: #f1c40f;
+      --border: #2a3054;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --code-bg: #0b0e1a;
+      --badge: #232a52;
+    }
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 800px at 10% 0%, #151a33, #0c1024 60%, #070a18 100%);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+      line-height: 1.45;
+    }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+    header .brand { font-weight: 700; letter-spacing: .3px; }
+    header .brand span { color: var(--primary); }
+    main { padding: 20px; max-width: 1200px; margin: 0 auto; }
+
+    .problem { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+    .problem h1 { margin: 0 0 8px; font-size: 20px; }
+    .problem p { color: var(--muted); }
+
+    .workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 1000px) { .workspace { grid-template-columns: 1fr; } }
+
+    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .editor-pane .toolbar { display: flex; gap: 10px; padding: 10px; background: var(--panel-2); border-bottom: 1px solid var(--border); }
+    .toolbar .spacer { flex: 1; }
+
+    .btn { border: 1px solid var(--border); background: var(--badge); color: var(--text); padding: 8px 12px; font-weight: 600; border-radius: 10px; cursor: pointer; }
+    .btn.primary { background: linear-gradient(180deg, var(--primary), var(--primary-2)); border: 1px solid #2753e6; }
+    .btn.secondary { background: #21274d; }
+
+    .badge { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border); background: var(--badge); padding: 6px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; }
+    .badge.amber { color: #ffe07a; }
+
+    .editor { width: 100%; min-height: 420px; background: var(--code-bg); color: #d1e3ff; border: 0; padding: 14px; font-family: monospace; font-size: 14px; resize: vertical; }
+
+    .result-pane header { padding: 10px; background: var(--panel-2); border-bottom: 1px solid var(--border); }
+    .results { padding: 10px 12px 16px; max-height: 520px; overflow: auto; }
+    .test-row { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; padding: 10px; border: 1px solid #222a55; border-radius: 10px; margin: 8px 0; }
+    .test-row.pass { border-color: rgba(46, 204, 113, .35); }
+    .test-row.fail { border-color: rgba(255, 93, 93, .35); }
+    .test-row .name { font-weight: 700; }
+    .test-row .detail { color: var(--muted); font-family: monospace; }
+
+    .console { background: #0a0e21; border-top: 1px dashed var(--border); padding: 10px 12px; color: #9ad0ff; font-family: monospace; font-size: 13px; max-height: 160px; overflow: auto; }
+    .console .title { color: var(--muted); font-weight: 700; margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Code<span>Test</span> Demo</div>
+    <div id="global-pass" class="badge amber">0/0 passed</div>
+  </header>
+
+  <main>
+    <section class="problem">
+      <h1>Problem: Sum of two numbers</h1>
+      <p>Implement a function <code>solve(a, b)</code> that returns the sum of its two numeric arguments.</p>
+      <p class="note">Use "Run" to check your code locally. Your code will be tested against hidden cases.</p>
+    </section>
+
+    <section class="workspace">
+      <div class="panel editor-pane">
+        <div class="toolbar">
+          <button id="run-btn" class="btn primary">Run</button>
+          <button id="reset-btn" class="btn secondary">Reset</button>
+          <div class="spacer"></div>
+          <div id="pass-counter" class="badge amber">0/0 passed</div>
+        </div>
+        <textarea id="editor" class="editor" spellcheck="false"></textarea>
+      </div>
+
+      <div class="panel result-pane">
+        <header><strong>Results</strong></header>
+        <div id="results" class="results"></div>
+        <div class="console">
+          <div class="title">Console</div>
+          <pre id="console-output"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+  // ---------- Coding workspace ----------
+  const editor = document.getElementById('editor');
+  const runBtn = document.getElementById('run-btn');
+  const resetBtn = document.getElementById('reset-btn');
+  const resultsEl = document.getElementById('results');
+  const consoleEl = document.getElementById('console-output');
+  const passCounter = document.getElementById('pass-counter');
+  const globalPass = document.getElementById('global-pass');
+
+  const initialCode = `function solve(a, b) {
+  // Return the sum of two numbers
+  return a + b;
+}`;
+  editor.value = initialCode;
+
+  const tests = [
+    { name: 'Small positive numbers', input: [1, 2], expected: 3 },
+    { name: 'Zero values', input: [0, 0], expected: 0 },
+    { name: 'With a negative', input: [-5, 3], expected: -2 },
+    { name: 'Large integers', input: [1000000, 2345678], expected: 3345678 },
+    { name: 'Floating point', input: [1.5, 2.25], expected: 3.75 }
+  ];
+
+  runBtn.addEventListener('click', () => {
+    resultsEl.innerHTML = '';
+    consoleEl.textContent = '';
+    let code = editor.value;
+    try {
+      eval(code);
+    } catch (err) {
+      consoleEl.textContent = 'Error: ' + err.message;
+      return;
+    }
+
+    let passed = 0;
+    tests.forEach(test => {
+      let output;
+      try {
+        output = solve(...test.input);
+      } catch (err) {
+        output = 'Error: ' + err.message;
+      }
+      const row = document.createElement('div');
+      row.className = 'test-row';
+      row.innerHTML = `<div class="name">${test.name}</div>
+                       <div class="detail">Expected: ${test.expected}, Got: ${output}</div>`;
+      if (output === test.expected) {
+        row.classList.add('pass');
+        passed++;
+      } else {
+        row.classList.add('fail');
+      }
+      resultsEl.appendChild(row);
+    });
+
+    passCounter.textContent = `${passed}/${tests.length} passed`;
+    globalPass.textContent = `${passed}/${tests.length} passed`;
+  });
+
+  resetBtn.addEventListener('click', () => {
+    editor.value = initialCode;
+    resultsEl.innerHTML = '';
+    consoleEl.textContent = '';
+    passCounter.textContent = '0/0 passed';
+    globalPass.textContent = '0/0 passed';
+  });
+</script>
+</body>
+</html>

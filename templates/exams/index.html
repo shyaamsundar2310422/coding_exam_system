@@ -1,534 +1,723 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Coding Test | Django Backend</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HackerRank-Style Coding Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <style>
-    :root {
-      --bg: #0f1221;
-      --panel: #161a2e;
-      --panel-2: #1d2240;
-      --text: #e9ecf1;
-      --muted: #aeb4c2;
-      --primary: #6ea8fe;
-      --primary-2: #3f7bfd;
-      --red: #ff5d5d;
-      --amber: #f1c40f;
-      --border: #2a3054;
-      --shadow: rgba(0, 0, 0, 0.35);
-      --code-bg: #0b0e1a;
-      --badge: #232a52;
-    }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      background: radial-gradient(1200px 800px at 10% 0%, #151a33, #0c1024 60%, #070a18 100%);
-      color: var(--text);
-      font-family: system-ui, sans-serif;
-      line-height: 1.45;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border);
-      background: var(--panel);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    header .brand { font-weight: 700; letter-spacing: .3px; }
-    header .brand span { color: var(--primary); }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 12px;
-    }
-    .badge.amber { background: rgba(241,196,15,.12); border: 1px solid rgba(241,196,15,.4); color: #ffe07a; }
-    .badge.red { background: rgba(255,93,93,.12); border: 1px solid rgba(255,93,93,.4); color: #ffb3b3; }
-    main { padding: 20px; max-width: 1200px; margin: 0 auto; }
-    .problem {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 18px;
-      box-shadow: 0 10px 30px var(--shadow);
-      margin-bottom: 16px;
-    }
-    .workspace {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    @media (max-width: 1000px) { .workspace { grid-template-columns: 1fr; } }
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px var(--shadow);
-    }
-    .editor-pane .toolbar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      background: var(--panel-2);
-      border-bottom: 1px solid var(--border);
-    }
-    .btn {
-      border: 1px solid var(--border);
-      background: var(--badge);
-      color: var(--text);
-      padding: 8px 12px;
-      font-weight: 600;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .btn.primary { background: linear-gradient(180deg, var(--primary), var(--primary-2)); border: 1px solid #2753e6; }
-    .btn:disabled { opacity: .6; cursor: not-allowed; }
-    .editor {
-      width: 100%;
-      min-height: 420px;
-      background: var(--code-bg);
-      color: #d1e3ff;
-      border: 0;
-      padding: 14px;
-      font-family: monospace;
-      font-size: 14px;
-      line-height: 1.5;
-      outline: none;
-      resize: vertical;
-    }
-    .results { padding: 10px; max-height: 520px; overflow: auto; }
-    .test-row {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 8px 12px;
-      background: #11152b;
-      border: 1px solid #222a55;
-      padding: 10px;
-      border-radius: 10px;
-      margin: 8px 0;
-    }
-    .test-row.pass { border-color: rgba(46,204,113,.35); }
-    .test-row.fail { border-color: rgba(255,93,93,.35); }
-    .console {
-      background: #0a0e21;
-      border-top: 1px dashed var(--border);
-      padding: 10px;
-      font-family: monospace;
-      font-size: 13px;
-      color: #9ad0ff;
-      max-height: 160px;
-      overflow: auto;
-    }
-    .console .title { color: var(--muted); font-weight: 700; margin-bottom: 6px; }
-    .language-selector {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .language-selector select {
-      background: var(--badge);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-    }
-  </style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .problems-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+
+        .problem-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .problem-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .difficulty-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .difficulty-easy { background: #00B894; }
+        .difficulty-medium { background: #FDCB6E; }
+        .difficulty-hard { background: #E17055; }
+
+        .problem-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .contest-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .contest-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .contest-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .contest-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .problem-solving {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .problem-description {
+            margin-bottom: 2rem;
+        }
+
+        .problem-description h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .problem-description p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .code-editor {
+            margin-bottom: 2rem;
+        }
+
+        .code-editor textarea {
+            width: 100%;
+            height: 300px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .test-results {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .test-case {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .test-case.passed {
+            border-left: 4px solid #27ae60;
+        }
+
+        .test-case.failed {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .test-case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-status {
+            padding: 0.2rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-passed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="brand">Code<span>Test</span> Django</div>
-    <div id="timer" class="badge amber">05:00</div>
-    <div id="global-pass" class="badge amber">0/0 passed</div>
-  </header>
-
-  <main>
-    <section class="problem">
-      <h1 id="problem-title">Loading problem...</h1>
-      <p id="problem-description">Please wait while we load the problem.</p>
-      <p class="note">Use "Run" to check your code locally. Your code will be tested against hidden cases.</p>
-    </section>
-
-    <section class="workspace">
-      <div class="panel editor-pane">
-        <div class="toolbar">
-          <button id="run-btn" class="btn primary">Run</button>
-          <button id="reset-btn" class="btn">Reset</button>
-          <button id="submit-btn" class="btn primary">Submit</button>
-          <div class="spacer"></div>
-          <div class="language-selector">
-            <label for="language-select">Language:</label>
-            <select id="language-select">
-              <option value="javascript">JavaScript</option>
-              <option value="python">Python</option>
-            </select>
-          </div>
-          <div id="pass-counter" class="badge amber">0/0 passed</div>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">CodeContest</div>
+            <nav class="nav-menu">
+                <a href="#problems">Problems</a>
+                <a href="#contests">Contests</a>
+                <a href="#leaderboard">Leaderboard</a>
+                <a href="#profile">Profile</a>
+            </nav>
         </div>
-        <textarea id="editor" class="editor" spellcheck="false"></textarea>
-      </div>
+    </div>
 
-      <div class="panel result-pane">
-        <header><strong>Results</strong></header>
-        <div id="results" class="results"></div>
-        <div class="console">
-          <div class="title">Console</div>
-          <pre id="console-output"></pre>
+    <div class="main-container">
+        <!-- Dashboard Section -->
+        <div class="dashboard">
+            <div class="problems-section">
+                <h2 class="section-title">Problems</h2>
+                <div id="problemsList">
+                    <div class="loading">Loading problems... Please wait while we load the problems.</div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <h3 class="section-title">Active Contests</h3>
+                <div id="contestsList">
+                    <div class="loading">Loading contests...</div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
-  </main>
 
-<script>
-  // ---------- Global Variables ----------
-  let currentProblem = null;
-  let currentSession = null;
-  let timeLeft = 300; // 5 minutes
-  let timerInterval = null;
-  let problems = [];
+        <!-- Problem Solving Section -->
+        <div id="problemSolving" class="problem-solving hidden">
+            <h2 class="section-title" id="currentProblemTitle">Problem Title</h2>
+            
+            <div class="problem-description" id="problemDescription">
+                <!-- Problem description will be loaded here -->
+            </div>
 
-  // ---------- DOM Elements ----------
-  const editor = document.getElementById('editor');
-  const runBtn = document.getElementById('run-btn');
-  const resetBtn = document.getElementById('reset-btn');
-  const resultsEl = document.getElementById('results');
-  const consoleEl = document.getElementById('console-output');
-  const passCounter = document.getElementById('pass-counter');
-  const globalPass = document.getElementById('global-pass');
-  const submitBtn = document.getElementById('submit-btn');
-  const timerEl = document.getElementById('timer');
-  const problemTitle = document.getElementById('problem-title');
-  const problemDescription = document.getElementById('problem-description');
-  const languageSelect = document.getElementById('language-select');
+            <div class="code-editor">
+                <h3>Your Code</h3>
+                <textarea id="codeEditor" placeholder="Write your solution here..."></textarea>
+            </div>
 
-  // ---------- API Functions ----------
-  async function fetchProblems() {
-    try {
-      const response = await fetch('/api/problems/');
-      if (response.ok) {
-        problems = await response.json();
-        if (problems.length > 0) {
-          loadProblem(0);
-        } else {
-          console.error('No problems available');
+            <div class="action-buttons">
+                <button class="btn btn-warning" onclick="runCode()">Run Code</button>
+                <button class="btn btn-success" onclick="submitCode()">Submit Solution</button>
+                <button class="btn btn-primary" onclick="backToProblems()">Back to Problems</button>
+            </div>
+
+            <div id="testResults" class="test-results hidden">
+                <h3>Test Results</h3>
+                <div id="testResultsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentProblem = null;
+        let currentSession = null;
+        let problems = [];
+        let contests = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchProblems();
+            fetchContests();
+        });
+
+        // Fetch problems from the API
+        async function fetchProblems() {
+            try {
+                const response = await fetch('/api/problems/');
+                if (response.ok) {
+                    problems = await response.json();
+                    displayProblems(problems);
+                } else {
+                    console.error('Failed to fetch problems:', response.status);
+                    document.getElementById('problemsList').innerHTML = 
+                        '<div class="error">Failed to load problems. Please try again later.</div>';
+                }
+            } catch (error) {
+                console.error('Error fetching problems:', error);
+                document.getElementById('problemsList').innerHTML = 
+                    '<div class="error">Error loading problems. Please check your connection.</div>';
+            }
         }
-      } else {
-        console.error('Failed to fetch problems');
-      }
-    } catch (error) {
-      console.error('Error fetching problems:', error);
-    }
-  }
 
-  async function startExamSession(problemId) {
-    try {
-      const response = await fetch(`/api/problems/${problemId}/start_exam/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+        // Display problems in the UI
+        function displayProblems(problemsList) {
+            const problemsContainer = document.getElementById('problemsList');
+            
+            if (problemsList.length === 0) {
+                problemsContainer.innerHTML = '<div class="loading">No problems available.</div>';
+                return;
+            }
+
+            const problemsHTML = problemsList.map(problem => `
+                <div class="problem-card" onclick="selectProblem(${problem.id})">
+                    <div class="problem-header">
+                        <div class="problem-title">${problem.title}</div>
+                        <div class="difficulty-badge difficulty-${problem.category?.name?.toLowerCase() || 'medium'}">
+                            ${problem.category?.name || 'Medium'}
+                        </div>
+                    </div>
+                    <div class="problem-stats">
+                        <span>Points: ${problem.points}</span>
+                        <span>Difficulty: ${problem.difficulty_score}/10</span>
+                        <span>Acceptance: ${problem.acceptance_rate?.toFixed(1) || 0}%</span>
+                    </div>
+                </div>
+            `).join('');
+
+            problemsContainer.innerHTML = problemsHTML;
         }
-      });
-      
-      if (response.ok) {
-        const sessionData = await response.json();
-        console.log('Session data received:', sessionData);
-        currentSession = sessionData;
-        timeLeft = sessionData.time_remaining;
-        startTimer();
-        return sessionData;
-      } else {
-        console.error('Failed to start exam session');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error starting exam session:', error);
-      return null;
-    }
-  }
 
-  async function executeCode(code, language, testCases) {
-    try {
-      const response = await fetch('/api/execute/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          code: code,
-          language: language,
-          test_cases: testCases
-        })
-      });
-      
-      if (response.ok) {
-        return await response.json();
-      } else {
-        console.error('Failed to execute code');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error executing code:', error);
-      return null;
-    }
-  }
+        // Fetch contests from the API
+        async function fetchContests() {
+            try {
+                const response = await fetch('/api/contests/');
+                if (response.ok) {
+                    contests = await response.json();
+                    displayContests(contests);
+                } else {
+                    console.error('Failed to fetch contests:', response.status);
+                    document.getElementById('contestsList').innerHTML = 
+                        '<div class="error">Failed to load contests.</div>';
+                }
+            } catch (error) {
+                console.error('Error fetching contests:', error);
+                document.getElementById('contestsList').innerHTML = 
+                    '<div class="error">Error loading contests.</div>';
+            }
+        }
 
-  async function submitCode(code, language) {
-    if (!currentSession) {
-      console.error('No active session');
-      return null;
-    }
+        // Display contests in the sidebar
+        function displayContests(contestsList) {
+            const contestsContainer = document.getElementById('contestsList');
+            
+            if (contestsList.length === 0) {
+                contestsContainer.innerHTML = '<div class="loading">No contests available.</div>';
+                return;
+            }
 
-    // Debug logging
-    console.log('Current session:', currentSession);
-    console.log('Session ID:', currentSession.id);
-    console.log('Session structure:', JSON.stringify(currentSession, null, 2));
+            const contestsHTML = contestsList.map(contest => `
+                <div class="contest-card" onclick="viewContest(${contest.id})">
+                    <div class="contest-title">${contest.title}</div>
+                    <div class="contest-info">
+                        <div>Type: ${contest.contest_type_display}</div>
+                        <div>Status: ${contest.status_display}</div>
+                        <div>Duration: ${contest.duration} min</div>
+                        <div>Participants: ${contest.current_participants_count}/${contest.max_participants}</div>
+                    </div>
+                </div>
+            `).join('');
 
-    try {
-      // Get the correct session ID - it might be nested
-      const sessionId = currentSession.id || currentSession.session_id || currentSession.sessionId;
-      console.log('Using session ID:', sessionId);
-      
-      if (!sessionId) {
-        console.error('No valid session ID found');
-        return null;
-      }
-      
-      const response = await fetch(`/api/sessions/${sessionId}/submit/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          code: code,
-          language: language
-        })
-      });
-      
-      if (response.ok) {
-        return await response.json();
-      } else {
-        const errorText = await response.text();
-        console.error('Failed to submit code. Status:', response.status);
-        console.error('Error response:', errorText);
-        return null;
-      }
-    } catch (error) {
-      console.error('Error submitting code:', error);
-      return null;
-    }
-  }
+            contestsContainer.innerHTML = contestsHTML;
+        }
 
-  // ---------- Timer Functions ----------
-  function startTimer() {
-    if (timerInterval) {
-      clearInterval(timerInterval);
-    }
-    
-    timerInterval = setInterval(updateTimer, 1000);
-  }
+        // Select a problem to solve
+        async function selectProblem(problemId) {
+            try {
+                const response = await fetch(`/api/problems/${problemId}/start_exam/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
 
-  function updateTimer() {
-    let minutes = Math.floor(timeLeft / 60);
-    let seconds = timeLeft % 60;
-    timerEl.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
-    
-    if (timeLeft <= 60) {
-      timerEl.classList.remove('amber');
-      timerEl.classList.add('red');
-    }
-    
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      finishTest(true);
-    }
-    timeLeft--;
-  }
+                if (response.ok) {
+                    const sessionData = await response.json();
+                    currentSession = sessionData;
+                    currentProblem = problems.find(p => p.id === problemId);
+                    
+                    console.log('Session started:', sessionData);
+                    console.log('Current problem:', currentProblem);
+                    
+                    startExamSession(sessionData);
+                } else {
+                    console.error('Failed to start exam session:', response.status);
+                }
+            } catch (error) {
+                console.error('Error starting exam session:', error);
+            }
+        }
 
-  // ---------- Problem Loading ----------
-  async function loadProblem(idx) {
-    if (idx >= problems.length) {
-      showTestCompleted();
-      return;
-    }
+        // Start exam session
+        function startExamSession(sessionData) {
+            // Hide problems section
+            document.querySelector('.dashboard').classList.add('hidden');
+            
+            // Show problem solving section
+            document.getElementById('problemSolving').classList.remove('hidden');
+            
+            // Set problem title
+            document.getElementById('currentProblemTitle').textContent = currentProblem.title;
+            
+            // Set initial code
+            document.getElementById('codeEditor').value = currentProblem.initial_code;
+            
+            // Display problem description
+            const descriptionHTML = `
+                <h3>Problem Description</h3>
+                <p>${currentProblem.problem_statement}</p>
+                
+                <h3>Input Format</h3>
+                <p>${currentProblem.input_format}</p>
+                
+                <h3>Output Format</h3>
+                <p>${currentProblem.output_format}</p>
+                
+                <h3>Constraints</h3>
+                <p>${currentProblem.constraints}</p>
+                
+                <h3>Sample Input</h3>
+                <pre>${currentProblem.sample_input}</pre>
+                
+                <h3>Sample Output</h3>
+                <pre>${currentProblem.sample_output}</pre>
+                
+                ${currentProblem.explanation ? `<h3>Explanation</h3><p>${currentProblem.explanation}</p>` : ''}
+            `;
+            
+            document.getElementById('problemDescription').innerHTML = descriptionHTML;
+        }
 
-    currentProblem = problems[idx];
-    
-    // Update UI
-    problemTitle.textContent = `Problem: ${currentProblem.title}`;
-    problemDescription.innerHTML = currentProblem.description;
-    editor.value = currentProblem.initial_code;
-    
-    // Reset results
-    resultsEl.innerHTML = '';
-    consoleEl.textContent = '';
-    passCounter.textContent = `0/${currentProblem.test_cases.length} passed`;
-    globalPass.textContent = `0/${currentProblem.test_cases.length} passed`;
-    
-    // Enable buttons
-    runBtn.disabled = false;
-    resetBtn.disabled = false;
-    submitBtn.disabled = false;
-    editor.readOnly = false;
-    
-    // Start exam session
-    const session = await startExamSession(currentProblem.id);
-    if (!session) {
-      console.error('Failed to start exam session');
-    }
-  }
+        // Run code to test it
+        async function runCode() {
+            const code = document.getElementById('codeEditor').value;
+            const language = 'javascript'; // Default to JavaScript for now
+            
+            if (!code.trim()) {
+                alert('Please write some code first!');
+                return;
+            }
 
-  // ---------- Run Button ----------
-  runBtn.addEventListener('click', async () => {
-    if (!currentProblem) return;
-    
-    resultsEl.innerHTML = '';
-    consoleEl.textContent = '';
-    
-    const code = editor.value;
-    const language = languageSelect.value;
-    
-    if (!code.trim()) {
-      consoleEl.textContent = 'Error: Please enter some code';
-      return;
-    }
+            try {
+                const response = await fetch('/api/execute/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        language: language,
+                        test_cases: currentProblem.test_cases.filter(tc => tc.is_sample)
+                    })
+                });
 
-    // Prepare test cases for execution
-    const testCases = currentProblem.test_cases.map(tc => ({
-      name: tc.name,
-      input: tc.input_data,
-      expected: tc.expected_output
-    }));
+                if (response.ok) {
+                    const result = await response.json();
+                    displayTestResults(result.results, true);
+                } else {
+                    console.error('Failed to run code:', response.status);
+                }
+            } catch (error) {
+                console.error('Error running code:', error);
+            }
+        }
 
-    // Execute code
-    const result = await executeCode(code, language, testCases);
-    
-    if (result && result.success) {
-      displayTestResults(result.results);
-    } else {
-      consoleEl.textContent = 'Error: Failed to execute code';
-    }
-  });
+        // Submit code for evaluation
+        async function submitCode() {
+            if (!currentSession) {
+                console.error('No active session');
+                return;
+            }
 
-  // ---------- Display Results ----------
-  function displayTestResults(results) {
-    let passed = 0;
-    
-    results.forEach(result => {
-      const row = document.createElement('div');
-      row.className = 'test-row';
-      
-      const name = document.createElement('div');
-      name.textContent = result.name;
-      
-      const detail = document.createElement('div');
-      
-      if (result.error) {
-        row.classList.add('fail');
-        detail.textContent = `Error: ${result.error}`;
-      } else if (result.passed) {
-        row.classList.add('pass');
-        detail.textContent = `Passed (Got ${result.actual})`;
-        passed++;
-      } else {
-        row.classList.add('fail');
-        detail.textContent = `Failed (Got ${result.actual}, Expected ${result.expected})`;
-      }
-      
-      row.appendChild(name);
-      row.appendChild(detail);
-      resultsEl.appendChild(row);
-    });
-    
-    passCounter.textContent = `${passed}/${results.length} passed`;
-    globalPass.textContent = `${passed}/${results.length} passed`;
-  }
+            const code = document.getElementById('codeEditor').value;
+            const language = 'javascript';
 
-  // ---------- Reset Button ----------
-  resetBtn.addEventListener('click', () => {
-    if (currentProblem) {
-      editor.value = currentProblem.initial_code;
-    }
-  });
+            if (!code.trim()) {
+                alert('Please write some code first!');
+                return;
+            }
 
-  // ---------- Submit Button ----------
-  submitBtn.addEventListener('click', async () => {
-    if (!currentProblem || !currentSession) return;
-    
-    const code = editor.value;
-    const language = languageSelect.value;
-    
-    if (!code.trim()) {
-      alert('Please enter some code before submitting');
-      return;
-    }
-    
-    // Submit code
-    const submission = await submitCode(code, language);
-    
-    if (submission) {
-      finishTest(false);
-    } else {
-      alert('Failed to submit code. Please try again.');
-    }
-  });
+            // Debug logging
+            console.log('Current session:', currentSession);
+            console.log('Session ID:', currentSession.session_id);
+            console.log('Session structure:', JSON.stringify(currentSession, null, 2));
 
-  // ---------- Test Completion ----------
-  function finishTest(auto) {
-    runBtn.disabled = true;
-    resetBtn.disabled = true;
-    submitBtn.disabled = true;
-    editor.readOnly = true;
-    timerEl.classList.remove('amber');
-    timerEl.classList.add('red');
-    clearInterval(timerInterval);
+            try {
+                // Get the correct session ID - it might be nested
+                const sessionId = currentSession.session_id || currentSession.id || currentSession.sessionId;
+                console.log('Using session ID:', sessionId);
+                
+                if (!sessionId) {
+                    console.error('No valid session ID found');
+                    return;
+                }
+                
+                const response = await fetch(`/api/sessions/${sessionId}/submit/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        language: language
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    displayTestResults(result.test_results, false);
+                    showSuccess('Solution submitted successfully!');
+                } else {
+                    const errorText = await response.text();
+                    console.error('Failed to submit code. Status:', response.status);
+                    console.error('Error response:', errorText);
+                    showError('Failed to submit solution. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error submitting code:', error);
+                showError('Error submitting solution. Please check your connection.');
+            }
+        }
 
-    if (auto) {
-      alert("⏰ Time is up! Moving to next problem.");
-    } else {
-      alert("✅ Submitted! Moving to next problem.");
-    }
+        // Display test results
+        function displayTestResults(results, isRun) {
+            const resultsContainer = document.getElementById('testResultsContent');
+            const resultsSection = document.getElementById('testResults');
+            
+            if (!results || results.length === 0) {
+                resultsContainer.innerHTML = '<div class="loading">No test results available.</div>';
+                resultsSection.classList.remove('hidden');
+                return;
+            }
 
-    // Find current problem index and move to next
-    const currentIndex = problems.findIndex(p => p.id === currentProblem.id);
-    setTimeout(() => {
-      loadProblem(currentIndex + 1);
-    }, 500);
-  }
+            const resultsHTML = results.map(result => `
+                <div class="test-case ${result.passed ? 'passed' : 'failed'}">
+                    <div class="test-case-header">
+                        <span class="test-status ${result.passed ? 'status-passed' : 'status-failed'}">
+                            ${result.passed ? 'PASSED' : 'FAILED'}
+                        </span>
+                        <span>${result.name}</span>
+                    </div>
+                    <div>
+                        <strong>Input:</strong> ${JSON.stringify(result.input)}<br>
+                        <strong>Expected:</strong> ${JSON.stringify(result.expected)}<br>
+                        <strong>Actual:</strong> ${JSON.stringify(result.actual)}<br>
+                        ${result.error ? `<strong>Error:</strong> ${result.error}` : ''}
+                    </div>
+                </div>
+            `).join('');
 
-  function showTestCompleted() {
-    problemTitle.textContent = 'Test Completed';
-    problemDescription.textContent = 'Thank you for participating.';
-    document.querySelector('.workspace').style.display = 'none';
-  }
+            resultsContainer.innerHTML = resultsHTML;
+            resultsSection.classList.remove('hidden');
+        }
 
-  // ---------- Language Change ----------
-  languageSelect.addEventListener('change', () => {
-    if (currentProblem) {
-      // Update initial code based on language
-      const language = languageSelect.value;
-      if (language === 'python') {
-        editor.value = currentProblem.initial_code.replace('function solve', 'def solve');
-      } else {
-        editor.value = currentProblem.initial_code.replace('def solve', 'function solve');
-      }
-    }
-  });
+        // Go back to problems list
+        function backToProblems() {
+            document.getElementById('problemSolving').classList.add('hidden');
+            document.querySelector('.dashboard').classList.remove('hidden');
+            document.getElementById('testResults').classList.add('hidden');
+            
+            currentProblem = null;
+            currentSession = null;
+        }
 
-  // ---------- Initial Load ----------
-  document.addEventListener('DOMContentLoaded', () => {
-    fetchProblems();
-  });
-</script>
+        // View contest details
+        function viewContest(contestId) {
+            // This would navigate to a contest-specific page
+            alert(`Viewing contest ${contestId}. This feature is coming soon!`);
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            
+            const container = document.getElementById('problemSolving');
+            container.insertBefore(successDiv, container.firstChild);
+            
+            setTimeout(() => successDiv.remove(), 5000);
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            const container = document.getElementById('problemSolving');
+            container.insertBefore(errorDiv, container.firstChild);
+            
+            setTimeout(() => errorDiv.remove(), 5000);
+        }
+    </script>
 </body>
 </html> 

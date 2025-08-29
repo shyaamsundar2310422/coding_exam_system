@@ -3,9 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Coding Test | Redirecting to Django Version</title>
-  <meta http-equiv="refresh" content="3;url=http://localhost:8000/" />
-
+  <title>Coding Test | Django Backend</title>
   <style>
     :root {
       --bg: #0f1221;
@@ -137,15 +135,16 @@
 <body>
   <header>
     <div class="brand">Code<span>Test</span> Demo</div>
-    <div class="badge amber">Redirecting...</div>
     <div class="badge amber">Django Backend</div>
   </header>
 
   <main>
     <section class="problem">
-      <h1>Redirecting to Django Backend</h1>
-      <p>This application has been upgraded to use Django framework with a full backend system.</p>
-      <p class="note">You will be redirected to the new Django version in a few seconds. If not, <a href="http://localhost:8000/" style="color: var(--primary);">click here</a>.</p>
+      <h1>Available Problems</h1>
+      <p>Problems are loaded from the Django backend.</p>
+      <div id="problems-list">
+        <div class="badge red">Loading problems...</div>
+      </div>
     </section>
 
     <section class="workspace">
@@ -167,22 +166,35 @@
   </main>
 
 <script>
-  // Redirect to Django backend
-  console.log('Redirecting to Django backend...');
-  
-  // Show countdown
-  let countdown = 3;
-  const countdownElement = document.querySelector('.badge.amber');
-  
-  const countdownInterval = setInterval(() => {
-    countdown--;
-    countdownElement.textContent = `Redirecting in ${countdown}s...`;
-    
-    if (countdown <= 0) {
-      clearInterval(countdownInterval);
-      window.location.href = 'http://localhost:8000/';
-    }
-  }, 1000);
+  // Fetch problems from Django backend and display them
+  const problemsListDiv = document.getElementById('problems-list');
+
+  fetch('/api/problems/')
+    .then(response => response.json())
+    .then(problemsList => {
+      // Ensure problemsList is an array
+      if (!Array.isArray(problemsList)) {
+        problemsListDiv.innerHTML = '<div class="badge red">Error: Problems data is not an array.</div>';
+        return;
+      }
+      if (problemsList.length === 0) {
+        problemsListDiv.innerHTML = '<div class="badge amber">No problems found.</div>';
+        return;
+      }
+      // Display problems
+      problemsListDiv.innerHTML = '<ul style="padding-left: 20px;">' +
+        problemsList.map(problem =>
+          `<li>
+            <strong>${problem.title}</strong><br>
+            <span style="color: var(--muted);">${problem.description}</span>
+          </li>`
+        ).join('') +
+        '</ul>';
+    })
+    .catch(err => {
+      problemsListDiv.innerHTML = `<div class="badge red">Error fetching problems: ${err.message}</div>`;
+      console.error('Error fetching problems:', err);
+    });
 </script>
 </body>
 </html>
